@@ -1,0 +1,4 @@
+certs/*.pem
+certs/openssl.cnf
+.DS_Store
+node_modules/

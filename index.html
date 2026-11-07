@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#070908" />
+  <meta name="description" content="ROSA VIVIDA · 指尖玫瑰。用 MediaPipe Hands 识别手势，握拳收成花苞，张手让 3D 粒子玫瑰在指尖绽放。" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>ROSA VIVIDA · 指尖玫瑰</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="./assets/favicon.svg" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- Icon sprite ------------------------------------------------------- -->
+  <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-camera" viewBox="0 0 24 24">
+      <path d="M4.5 8.5h3l1.4-2.1h6.2L16.5 8.5h3a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17v-7a1.5 1.5 0 0 1 1.5-1.5Z"/>
+      <circle cx="12" cy="13.3" r="3.5"/>
+    </symbol>
+    <symbol id="i-hand-open" viewBox="0 0 32 32">
+      <path d="M9.4 15.2V8.4a1.8 1.8 0 0 1 3.6 0v5.1-8.6a1.8 1.8 0 0 1 3.6 0v8.4-7.5a1.8 1.8 0 0 1 3.6 0v8.2-5.3a1.8 1.8 0 0 1 3.6 0v8.2c0 6.3-3.3 9.5-8.3 9.5-4.1 0-6.1-2.1-8-6.1L4.9 16a1.9 1.9 0 0 1 3.3-1.9l1.2 1.1Z"/>
+    </symbol>
+    <symbol id="i-hand-fist" viewBox="0 0 32 32">
+      <path d="M7.4 13.4c0-1.1.9-2 2-2h13.2c4 0 5.7 2.3 5.7 5.5 0 2.3-.8 4.3-2.6 6.2-1.8 1.9-4 3.1-7 3.1H12c-3.3 0-5.6-1.4-6.8-4.5l-1-2.7a2 2 0 0 1 1.9-2.6h1.2v-3Z"/>
+      <path d="M9.2 11.4V9.2a2 2 0 0 1 4 0v2.2m0-2.6V7.6a2 2 0 0 1 4 0v3m0-2.6a2 2 0 0 1 4 0v3"/>
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.7"/>
+      <path d="M12 10.7v5.5M12 7.6v.2"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.8 12s3.3-5.5 9.2-5.5 9.2 5.5 9.2 5.5-3.3 5.5-9.2 5.5S2.8 12 2.8 12Z"/>
+      <circle cx="12" cy="12" r="2.6"/>
+    </symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24">
+      <path d="M4 4 20 20M9.9 6.8A10.8 10.8 0 0 1 12 6.5c5.9 0 9.2 5.5 9.2 5.5a15.5 15.5 0 0 1-3.2 3.6M6.2 8.6A15.8 15.8 0 0 0 2.8 12s3.3 5.5 9.2 5.5c1.1 0 2.1-.2 3-.5"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M4.5 12h14M13.5 7l5 5-5 5"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect x="5.2" y="10.4" width="13.6" height="9.2" rx="2"/>
+      <path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24">
+      <path d="M12 2.8c.5 5.2 3.9 8.7 9.2 9.2-5.3.5-8.7 4-9.2 9.2-.5-5.2-4-8.7-9.2-9.2 5.2-.5 8.7-4 9.2-9.2Z"/>
+    </symbol>
+    <symbol id="i-rose" viewBox="0 0 24 24">
+      <path d="M12 21c-1.1-4.5-4.2-6.6-7-8 4.6-.5 7 .7 8.6 3.1.4-5 2.6-8.2 6.3-10.4-.4 5.4-.8 9.7 1.1 13.4-2.4-2.5-4.9-2.8-7.1-1.5-.7 1.7-1.3 2.9-1.9 3.4Z"/>
+      <path d="M12 16c1.8-2.2 4.4-3.2 7.2-3.5-2 3-4.6 4.6-7.2 5"/>
+    </symbol>
+  </svg>
+
+  <main id="experience" class="experience">
+    <!-- Camera / atmosphere ------------------------------------------- -->
+    <div class="atmosphere" aria-hidden="true">
+      <video id="camera" class="camera-feed" playsinline muted autoplay></video>
+      <canvas id="hand-overlay" class="hand-overlay"></canvas>
+      <div class="atmosphere__wash"></div>
+      <div class="aurora aurora--rose"></div>
+      <div class="aurora aurora--jade"></div>
+      <div class="aurora aurora--violet"></div>
+      <div class="grain"></div>
+      <div class="vignette"></div>
+    </div>
+
+    <canvas id="webgl" class="webgl" aria-label="可互动的三维粒子玫瑰"></canvas>
+
+    <!-- Persistent interface ------------------------------------------ -->
+    <header id="topbar" class="topbar" aria-hidden="true">
+      <a class="brand" href="./" aria-label="ROSA VIVIDA 首页">
+        <span class="brand__mark"><svg><use href="#i-rose"></use></svg></span>
+        <span class="brand__type">
+          <strong>ROSA VIVIDA</strong>
+          <small>指尖玫瑰 · 实时交互花园</small>
+        </span>
+      </a>
+      <div class="topbar__actions">
+        <span id="live-pill" class="live-pill" title="手势追踪状态">
+          <i></i><span id="track-state">等待镜头</span>
+        </span>
+        <button id="btn-eye" class="icon-button" type="button" aria-label="显示或隐藏摄像头背景" title="摄像头背景">
+          <svg><use href="#i-eye"></use></svg>
+        </button>
+        <button id="btn-help" class="icon-button" type="button" aria-label="查看手势指南" title="手势指南">
+          <svg><use href="#i-info"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="side-label" aria-hidden="true">
+      <span>GESTURE STUDY — N° 07</span>
+      <span>21 LANDMARKS / REALTIME</span>
+    </div>
+
+    <section id="hud" class="hud" aria-hidden="true" aria-label="手势状态">
+      <div class="gesture-card">
+        <div class="gesture-card__top">
+          <div id="gesture-glyph" class="gesture-glyph" aria-hidden="true">
+            <svg class="glyph glyph--fist"><use href="#i-hand-fist"></use></svg>
+            <svg class="glyph glyph--open"><use href="#i-hand-open"></use></svg>
+          </div>
+          <div class="gesture-copy">
+            <p class="micro-label">HAND SIGNAL <span id="signal-id">—</span></p>
+            <h2 id="gesture-label">寻找手掌</h2>
+          </div>
+          <div class="gesture-percent">
+            <span id="openness-value">00</span><small>%</small>
+          </div>
+        </div>
+        <div class="bloom-meter" role="progressbar" aria-label="花朵绽放程度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span id="bloom-fill" class="bloom-meter__fill"></span>
+          <span class="bloom-meter__ticks" aria-hidden="true"></span>
+        </div>
+        <div class="bloom-scale">
+          <span>CLOSED <em>花苞</em></span>
+          <span><em>绽放</em> BLOOM</span>
+        </div>
+      </div>
+      <p class="hint"><span class="hint__line"></span>握拳收拢<span class="hint__dot">·</span>张开放绽<span class="hint__line"></span></p>
+    </section>
+
+    <!-- Opening scene ------------------------------------------------ -->
+    <section id="intro" class="intro" aria-label="开始体验">
+      <div class="intro__content">
+        <p class="eyebrow">
+          <span class="eyebrow__line"></span>
+          AN INTERACTIVE BOTANICAL STUDY
+          <span class="eyebrow__index">N° 07</span>
+        </p>
+        <h1 class="hero">
+          <span class="hero__latin">Rosa</span>
+          <span class="hero__cn">指尖玫瑰</span>
+        </h1>
+        <p class="lede">把春天握进掌心，<br /><em>再让它从指尖醒来。</em></p>
+
+        <div class="gesture-guide" aria-label="手势说明">
+          <div class="gesture-guide__item">
+            <span class="gesture-guide__icon"><svg><use href="#i-hand-fist"></use></svg></span>
+            <span><strong>握拳</strong><small>花苞收拢</small></span>
+          </div>
+          <span class="gesture-guide__rule"></span>
+          <div class="gesture-guide__item">
+            <span class="gesture-guide__icon"><svg><use href="#i-hand-open"></use></svg></span>
+            <span><strong>张开手掌</strong><small>花瓣绽放</small></span>
+          </div>
+        </div>
+
+        <div class="intro__actions">
+          <button id="start-camera" class="button button--primary" type="button">
+            <span class="button__icon"><svg><use href="#i-camera"></use></svg></span>
+            <span class="button__text">
+              <strong>开启摄像头</strong>
+              <small id="start-camera-note">允许访问，让手成为画笔</small>
+            </span>
+            <span class="button__arrow"><svg><use href="#i-arrow"></use></svg></span>
+            <span class="button__spinner" aria-hidden="true"></span>
+          </button>
+          <button id="start-touch" class="button button--ghost" type="button">
+            没有摄像头？进入触控模式
+            <svg><use href="#i-arrow"></use></svg>
+          </button>
+        </div>
+
+        <p class="privacy-note">
+          <svg><use href="#i-lock"></use></svg>
+          影像只在你的设备上处理，不会上传或保存
+        </p>
+      </div>
+
+      <div class="intro__footer">
+        <span>THREE.JS · MEDIAPIPE HANDS</span>
+        <span class="intro__footer-center"><i></i> LIVE BOTANICAL EXPERIMENT</span>
+        <span>© 2026 ROSA VIVIDA</span>
+      </div>
+    </section>
+
+    <!-- Guide dialog ------------------------------------------------- -->
+    <div id="guide" class="modal" hidden>
+      <div class="modal__scrim" data-close-guide></div>
+      <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+        <button id="close-guide" class="icon-button modal__close" type="button" aria-label="关闭指南">
+          <svg><use href="#i-close"></use></svg>
+        </button>
+        <p class="eyebrow eyebrow--small"><span class="eyebrow__line"></span>HOW TO BLOOM</p>
+        <h2 id="guide-title">让玫瑰听懂你的手</h2>
+        <p class="modal__lede">把手放在镜头前约 30–60 厘米处，保持光线均匀。花朵会跟随你的掌心和指尖轻轻游移。</p>
+        <div class="modal__steps">
+          <div class="modal__step">
+            <span class="modal__step-num">01</span>
+            <span class="gesture-guide__icon"><svg><use href="#i-hand-fist"></use></svg></span>
+            <div><strong>握拳</strong><p>花瓣收束，回到一颗安静的花苞。</p></div>
+          </div>
+          <div class="modal__step">
+            <span class="modal__step-num">02</span>
+            <span class="gesture-guide__icon"><svg><use href="#i-hand-open"></use></svg></span>
+            <div><strong>张开手掌</strong><p>粒子向外舒展，玫瑰在指间盛开。</p></div>
+          </div>
+          <div class="modal__step">
+            <span class="modal__step-num">03</span>
+            <span class="gesture-guide__icon"><svg><use href="#i-spark"></use></svg></span>
+            <div><strong>轻轻移动</strong><p>改变手的位置，花朵会向你靠近。</p></div>
+          </div>
+        </div>
+        <p class="modal__note">
+          <svg><use href="#i-lock"></use></svg>
+          所有 21 个手部关键点均在浏览器本地计算。画面不会离开这台设备。
+        </p>
+        <div class="modal__actions">
+          <button id="guide-continue" class="button button--primary button--compact" type="button">继续体验</button>
+          <button id="guide-touch" class="button button--ghost button--compact" type="button">切换到触控模式</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <div id="webgl-error" class="fatal" hidden>
+      <p class="eyebrow eyebrow--small"><span class="eyebrow__line"></span>CANVAS UNAVAILABLE</p>
+      <h2>这朵玫瑰需要 WebGL</h2>
+      <p>请使用最新版 Chrome、Safari 或 Edge，并确认浏览器已开启硬件加速。</p>
+      <button id="retry-webgl" class="button button--primary button--compact" type="button">刷新页面</button>
+    </div>
+  </main>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
