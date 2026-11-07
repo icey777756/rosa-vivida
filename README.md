@@ -1,5 +1,13 @@
 # ROSA VIVIDA · 指尖玫瑰
 
+## 在线访问（手机可直接打开）
+
+**https://icey777756.github.io/rosa-vivida/**
+
+GitHub 仓库：https://github.com/icey777756/rosa-vivida
+
+该站点由 GitHub Pages 托管，使用 HTTPS，手机浏览器授权摄像头后即可直接体验。
+
 ![桌面端](preview/desktop-intro.png)
 
 ![移动端绽放](preview/mobile-bloom.png)
@@ -32,7 +40,7 @@ python3 -m http.server 5173
 
 然后打开 `http://localhost:5173`。
 
-## 在手机上用摄像头
+## 本地运行与手机调试
 
 手机浏览器只在 **安全上下文**（HTTPS 或 localhost）中暴露 `getUserMedia()`。通过局域网 IP 以 `http://192.168.x.x` 打开时，摄像头按钮会提示需要 HTTPS；此时仍可点「没有摄像头？进入触控模式」。
 
